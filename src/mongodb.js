@@ -1,11 +1,17 @@
-const mongodb = require('mongodb');
+const { MongoClient, ObjectID } = require('mongodb');
 
-const MongoClient = mongodb.MongoClient;
 const connectionUrl = 'mongodb://127.0.0.1:27017';
 const dbName = 'taskmanager';
 const mongoOptions = {
   useNewUrlParser: true
 };
+
+// const id = new ObjectID();
+// console.log(id);
+// console.log(id.id);
+// console.log(id.id.length);
+// console.log(id.toHexString());
+// console.log(id.getTimestamp());
 
 MongoClient.connect(connectionUrl, mongoOptions, (error, client) => {
   if (error) {
@@ -17,19 +23,20 @@ MongoClient.connect(connectionUrl, mongoOptions, (error, client) => {
 
   const db = client.db(dbName);
 
-  //   db.collection('user').insertOne(
-  //     {
-  //       name: 'Rabel',
-  //       age: 29
-  //     },
-  //     (error, result) => {
-  //       if (error) {
-  //         console.log(error);
-  //         return;
-  //       }
-  //       console.log(result);
-  //     }
-  //   );
+//   db.collection('user').insertOne(
+//     {
+//     //   _id: id,
+//       name: 'Rabel',
+//       age: 29
+//     },
+//     (error, result) => {
+//       if (error) {
+//         console.log(error);
+//         return;
+//       }
+//       console.log(result.ops);
+//     }
+//   );
 
   //   db.collection('user').insertMany(
   //     [
@@ -51,27 +58,28 @@ MongoClient.connect(connectionUrl, mongoOptions, (error, client) => {
   //     }
   //   );
 
-//   db.collection('task').insertMany(
-//     [
-//       {
-//         description: 'Dentista',
-//         completed: true
-//       },
-//       {
-//         description: 'Mecanico',
-//         completed: false
-//       },
-//       {
-//         description: 'Ir al super',
-//         completed: false
-//       }
-//     ],
-//     (e, r) => {
-//       if (e) {
-//         console.log(e);
-//         return;
-//       }
-//       console.log(r.ops);
-//     }
-//   );
+  //   db.collection('task').insertMany(
+  //     [
+  //       {
+  //         description: 'Dentista',
+  //         completed: true
+  //       },
+  //       {
+  //         description: 'Mecanico',
+  //         completed: false
+  //       },
+  //       {
+  //         description: 'Ir al super',
+  //         completed: false
+  //       }
+  //     ],
+  //     (e, r) => {
+  //       if (e) {
+  //         console.log(e);
+  //         return;
+  //       }
+  //       console.log(r.ops);
+  //     }
+  //   );
+  client.close();
 });
