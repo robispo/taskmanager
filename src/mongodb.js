@@ -6,13 +6,6 @@ const mongoOptions = {
   useNewUrlParser: true
 };
 
-// const id = new ObjectID();
-// console.log(id);
-// console.log(id.id);
-// console.log(id.id.length);
-// console.log(id.toHexString());
-// console.log(id.getTimestamp());
-
 MongoClient.connect(connectionUrl, mongoOptions, (error, client) => {
   if (error) {
     console.log(error);
@@ -23,63 +16,54 @@ MongoClient.connect(connectionUrl, mongoOptions, (error, client) => {
 
   const db = client.db(dbName);
 
-//   db.collection('user').insertOne(
-//     {
-//     //   _id: id,
-//       name: 'Rabel',
-//       age: 29
-//     },
-//     (error, result) => {
-//       if (error) {
-//         console.log(error);
-//         return;
-//       }
-//       console.log(result.ops);
-//     }
-//   );
-
-  //   db.collection('user').insertMany(
-  //     [
-  //       {
-  //         name: 'Waldo',
-  //         age: 28
-  //       },
-  //       {
-  //         name: 'Titi',
-  //         age: 25
-  //       }
-  //     ],
-  //     (error, result) => {
-  //       if (error) {
-  //         console.log(error);
-  //         return;
-  //       }
-  //       console.log(result.ops);
-  //     }
-  //   );
-
-  //   db.collection('task').insertMany(
-  //     [
-  //       {
-  //         description: 'Dentista',
-  //         completed: true
-  //       },
-  //       {
-  //         description: 'Mecanico',
-  //         completed: false
-  //       },
-  //       {
-  //         description: 'Ir al super',
-  //         completed: false
-  //       }
-  //     ],
-  //     (e, r) => {
+  //   db.collection('user').findOne(
+  //     { _id: new ObjectID('5c842092a82e2539c1fcc3cf') },
+  //     (e, u) => {
   //       if (e) {
   //         console.log(e);
   //         return;
   //       }
-  //       console.log(r.ops);
+  //       console.log(u);
   //     }
   //   );
+
+  //   db.collection('user').find({ age: 29 }).toArray((e, us) => {
+  //     if (e) {
+  //       console.log(e);
+  //       return;
+  //     }
+  //     console.log(us);
+  //   });
+
+  //   db.collection('user').find({ age: 29 }).count((e, count) => {
+  //     if (e) {
+  //       console.log(e);
+  //       return;
+  //     }
+  //     console.log(count);
+  //   });
+
+  db.collection('task')
+    .find({})
+    .sort({ _id: -1 })
+    .limit(1)
+    .toArray((e, lastTask) => {
+      if (e) {
+        console.log(e);
+        return;
+      }
+      console.log(lastTask);
+    });
+
+  db.collection('task')
+    .find({ completed: false })
+    .toArray((e, tasks) => {
+      if (e) {
+        console.log(e);
+        return;
+      }
+      console.log(tasks);
+    });
+
   client.close();
 });
