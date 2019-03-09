@@ -4,7 +4,7 @@
   "description": "Task Manger",
   "main": "src/app.js",
   "scripts": {
-    "dev": "node src/app.js"
+    "dev": "clear && node src/app.js"
   },
   "keywords": [],
   "author": "Rabel Obispo",
