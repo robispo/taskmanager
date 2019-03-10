@@ -22,7 +22,7 @@ MongoClient.connect(connectionUrl, mongoOptions, (error, client) => {
     .catch(e => console.log(e));
 
   db.collection('task')
-    .deleteMany({ description: 'Dentista' })
+    .deleteOne({ description: 'Ir al super' })
     .then(d => console.log(d.deletedCount))
     .catch(e => console.log(e));
 
