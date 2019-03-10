@@ -9,22 +9,39 @@ const mongooseOptions = {
 
 mongoose.connect(connectionUrl, mongooseOptions);
 
-const User = mongoose.model('User', {
-  name: {
+// const User = mongoose.model('User', {
+//   name: {
+//     type: String
+//   },
+//   age: {
+//     type: Number
+//   }
+// });
+
+// const me = new User({
+//   name: 'Rabel',
+//   age: 'asdfa'
+// });
+
+// me.save()
+//   .then(d => console.log(d))
+//   .catch(e => console.log(e));
+
+const Task = mongoose.model('Task', {
+  description: {
     type: String
   },
-  age: {
-    type: Number
+  completed: {
+    type: Boolean
   }
 });
 
-const me = new User({
-  name: 'Rabel',
-  age: 'asdfa'
+const task = new Task({
+  description: 'Ir donde Waldo',
+  completed: false
 });
 
-me.save()
+task
+  .save()
   .then(d => console.log(d))
   .catch(e => console.log(e));
-
-  
