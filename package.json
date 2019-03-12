@@ -4,15 +4,16 @@
   "description": "Task Manger",
   "main": "src/app.js",
   "scripts": {
-    "dev": "clear && node src/app.js",
-    "dev1": "clear && node src/db/mongoose.js"
-
+    "dev1": "clear && node src/app.js",
+    "dev": "clear && node src/db/mongoose.js",
+    "mongodb": "mongod --dbpath=/Users/robispo/mongodb-data"
   },
   "keywords": [],
   "author": "Rabel Obispo",
   "license": "ISC",
   "dependencies": {
     "mongodb": "^3.1.13",
-    "mongoose": "^5.4.18"
+    "mongoose": "^5.4.18",
+    "validator": "^10.11.0"
   }
 }
