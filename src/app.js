@@ -64,7 +64,7 @@ app.get('/api/tasks', async (req, res) => {
     const tasks = await Task.find({});
     res.status(200).json(tasks);
   } catch (e) {
-    res.status(500).json(e);
+    res.status(500).json();
   }
 });
 
