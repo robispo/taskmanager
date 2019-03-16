@@ -19,7 +19,11 @@ router.post('/api/tasks', auth, async (req, res) => {
 router.get('/api/tasks', auth, async (req, res) => {
   const match = {};
   const options = {};
+  const sort = {};
   const booleans = ['true', 'false'];
+  const sorts = ['asc', 'desc'];
+  const asc = 1;
+  const desc = -1;
 
   if (req.query.completed) {
     const completedValue = req.query.completed.trim().toLowerCase();
@@ -48,6 +52,37 @@ router.get('/api/tasks', auth, async (req, res) => {
     }
     options.limit = parseInt(req.query.limit);
     options.skip = parseInt(req.query.skip);
+  }
+
+  if (req.query.sort) {
+    try {
+      const parts = req.query.sort.split(/[,:]+/);
+
+      for (let i = 0; i < parts.length; i = i + 2) {
+        if (
+          !parts[i + 1] ||
+          !sorts.includes(parts[i + 1].trim().toLowerCase())
+        ) {
+          res.status(400).json({
+            error:
+              'sort is a key:value pair, separated by "," and ":", where the value must be "asc" or "desc"!'
+          });
+          return;
+        }
+
+        sort[parts[i]] =
+          parts[i + 1].trim().toLowerCase() === 'asc' ? asc : desc;
+      }
+
+      options.sort = sort;
+      
+    } catch (e) {
+      res.status(400).json({
+        error:
+          'sort is a key:value pair, separated by "," and ":", where the value must be "asc" or "desc"!'
+      });
+      return;
+    }
   }
 
   try {
