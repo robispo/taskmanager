@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const Task = require('./task');
 
 const userSchema = mongoose.Schema({
   name: {
@@ -51,12 +52,26 @@ const userSchema = mongoose.Schema({
   ]
 });
 
+userSchema.virtual('tasks', {
+  ref: 'Task',
+  localField: '_id',
+  foreignField: 'user_id'
+});
+
 userSchema.pre('save', async function(next) {
   const user = this;
 
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
   }
+
+  next();
+});
+
+userSchema.pre('remove', async function(next) {
+  const user = this;
+
+  await Task.deleteMany({ user_id: user._id });
 
   next();
 });
@@ -82,16 +97,16 @@ userSchema.methods.generateAuthToken = async function() {
   return token;
 };
 
+userSchema.methods.toJSON = function() {
+  const user = this;
+  const publicUser = user.toObject();
 
-// userSchema.methods.getPublicProfile = async function() {
-//   const user = this;
-//   const token = jwt.sign({ _id: user._id.toString() }, 'Test');
+  delete publicUser.password;
+  delete publicUser.tokens;
+  delete publicUser.__v;
 
-//   user.tokens = user.tokens.concat({ token });
-//   await user.save();
-
-//   return token;
-// };
+  return publicUser;
+};
 
 const User = mongoose.model('User', userSchema);
 

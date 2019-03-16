@@ -9,8 +9,22 @@ const taskSchema = new mongoose.Schema({
   completed: {
     type: Boolean,
     default: false
+  },
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User'
   }
 });
+
+taskSchema.methods.toJSON = function() {
+  const task = this;
+  const publicTask = task.toObject();
+
+  delete publicTask.__v;
+
+  return publicTask;
+};
 
 const Task = mongoose.model('Task', taskSchema);
 

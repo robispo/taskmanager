@@ -11,7 +11,7 @@ router.post('/api/users', async (req, res) => {
     await user.save();
     const token = await user.generateAuthToken();
 
-    res.status(200).json({ user, token });
+    res.status(201).json({ user, token });
   } catch (e) {
     res.status(400).json(e);
   }
@@ -66,25 +66,16 @@ router.post('/api/users/logoutall', auth, async (req, res) => {
 });
 
 router.get('/api/users/me', auth, async (req, res) => {
+  // await req.user.populate('tasks').execPopulate();
+
+  // const user = await User.findById(req.user._id);
+  // await user.populate('tasks').execPopulate();
+
+  // console.log(user.tasks);
   res.json(req.user);
 });
 
-router.get('/api/users/:id', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-      res.status(404).json();
-      return;
-    }
-
-    res.status(200).json(user);
-  } catch (e) {
-    res.status(400).json(e);
-  }
-});
-
-router.patch('/api/users/:id', async (req, res) => {
+router.patch('/api/users/me', auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'age'];
   const isValidOperation = updates.every(p => allowedUpdates.includes(p));
@@ -97,37 +88,19 @@ router.patch('/api/users/:id', async (req, res) => {
   }
 
   try {
-    const user = await User.findById(req.params.id);
+    updates.forEach(p => (req.user[p] = req.body[p]));
+    await req.user.save();
 
-    if (!user) {
-      res.status(404).json();
-      return;
-    }
-
-    updates.forEach(p => (user[p] = req.body[p]));
-    await user.save();
-
-    res.status(200).json(user);
+    res.status(200).json(req.user);
   } catch (e) {
     res.status(400).json(e);
   }
-
-  // const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-  //   new: true,
-  //   runValidators: true
-  // });
 });
 
-router.delete('/api/users/:id', async (req, res) => {
+router.delete('/api/users/me', auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-
-    if (!user) {
-      res.status(404).json();
-      return;
-    }
-
-    res.status(200).json(user);
+    await req.user.remove();
+    res.status(200).json(req.user);
   } catch (e) {
     res.status(400).json(e);
   }
