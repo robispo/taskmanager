@@ -18,14 +18,40 @@ router.post('/api/tasks', auth, async (req, res) => {
 
 router.get('/api/tasks', auth, async (req, res) => {
   const match = {};
+  const options = {};
+  const booleans = ['true', 'false'];
 
   if (req.query.completed) {
-    match.completed = req.query.completed.trim().toLowerCase() === 'true';
+    const completedValue = req.query.completed.trim().toLowerCase();
+
+    if (!booleans.includes(completedValue)) {
+      res.status(400).json({
+        error: 'completed must be "true" or "false"!'
+      });
+      return;
+    }
+
+    match.completed = completedValue === 'true';
+  }
+
+  if (req.query.limit || req.query.skip) {
+    if (
+      isNaN(req.query.limit) ||
+      isNaN(req.query.skip) ||
+      parseInt(req.query.limit) < 0 ||
+      parseInt(req.query.skip) < 0
+    ) {
+      res.status(400).json({
+        error: 'limit and skip are use together, must be numbers and positives!'
+      });
+      return;
+    }
+    options.limit = parseInt(req.query.limit);
+    options.skip = parseInt(req.query.skip);
   }
 
   try {
-    //const tasks = await Task.find({ user_id: req.user._id });
-    await req.user.populate({ path: 'tasks', match }).execPopulate();
+    await req.user.populate({ path: 'tasks', match, options }).execPopulate();
 
     res.status(200).json(req.user.tasks);
   } catch (e) {
