@@ -17,9 +17,17 @@ router.post('/api/tasks', auth, async (req, res) => {
 });
 
 router.get('/api/tasks', auth, async (req, res) => {
+  const match = {};
+
+  if (req.query.completed) {
+    match.completed = req.query.completed.trim().toLowerCase() === 'true';
+  }
+
   try {
-    const tasks = await Task.find({ user_id: req.user._id });
-    res.status(200).json(tasks);
+    //const tasks = await Task.find({ user_id: req.user._id });
+    await req.user.populate({ path: 'tasks', match }).execPopulate();
+
+    res.status(200).json(req.user.tasks);
   } catch (e) {
     res.status(500).json();
   }
