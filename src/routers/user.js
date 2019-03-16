@@ -1,5 +1,6 @@
 const express = require('express');
-const User = require('../models/User');
+const User = require('../models/user');
+const auth = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -7,8 +8,10 @@ router.post('/api/users', async (req, res) => {
   const user = new User(req.body);
 
   try {
-    const newUser = await user.save();
-    res.status(201).json(newUser);
+    await user.save();
+    const token = await user.generateAuthToken();
+
+    res.status(200).json({ user, token });
   } catch (e) {
     res.status(400).json(e);
   }
@@ -19,13 +22,51 @@ router.post('/api/users', async (req, res) => {
   //   .catch(e => res.status(400).json(e));
 });
 
-router.get('/api/users', async (req, res) => {
+router.post('/api/users/login', async (req, res) => {
   try {
-    const users = await User.find({});
-    res.status(200).json(users);
+    const user = await User.findByCredentials(
+      req.body.email,
+      req.body.password
+    );
+
+    if (!user) {
+      res.status(401).json();
+      return;
+    }
+
+    const token = await user.generateAuthToken();
+
+    res
+      .set('Authorization', `Bearer ${token}`)
+      .status(200)
+      .json({ user, token });
   } catch (e) {
-    res.status(500).json();
+    res.status(401).json(e);
   }
+});
+
+router.post('/api/users/logout', auth, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter(t => t.token !== req.token);
+    await req.user.save();
+    res.json();
+  } catch (e) {
+    res.status(400).json();
+  }
+});
+
+router.post('/api/users/logoutall', auth, async (req, res) => {
+  try {
+    req.user.tokens = [];
+    await req.user.save();
+    res.json();
+  } catch (e) {
+    res.status(400).json();
+  }
+});
+
+router.get('/api/users/me', auth, async (req, res) => {
+  res.json(req.user);
 });
 
 router.get('/api/users/:id', async (req, res) => {
@@ -64,17 +105,17 @@ router.patch('/api/users/:id', async (req, res) => {
     }
 
     updates.forEach(p => (user[p] = req.body[p]));
-    const userUpdated = await user.save(); 
+    await user.save();
 
-    res.status(200).json(userUpdated);
+    res.status(200).json(user);
   } catch (e) {
     res.status(400).json(e);
   }
 
-     // const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-    //   new: true,
-    //   runValidators: true
-    // });
+  // const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+  //   new: true,
+  //   runValidators: true
+  // });
 });
 
 router.delete('/api/users/:id', async (req, res) => {

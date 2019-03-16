@@ -1,11 +1,15 @@
 const express = require('express');
 require('./db/mongoose');
 
-const userRouter = require('../src/routers/user');
-const taskRouter = require('../src/routers/task');
+const userRouter = require('./routers/user');
+const taskRouter = require('./routers/task');
 
-const app = express();
 const port = process.env.PORT || 3000;
+const app = express();
+
+// app.use((req, res, next) => {
+//   res.status(503).json({message:'Under Maintenance!'});
+// });
 
 app.use(express.json());
 app.use((err, req, res, next) => {
@@ -22,3 +26,15 @@ app.all('*', (req, res) => {
 });
 
 app.listen(port, () => console.log(`Server is up in port ${port}!`));
+
+// const jwt = require('jsonwebtoken');
+// const jwtf = async () => {
+//   const token = jwt.sign({ _id: 'id' }, 'Test', {
+//     expiresIn: '0 seconds'
+//   });
+//   console.log(token);
+
+//   // const data = jwt.verify(token, 'Test!');
+//   // console.log(data);
+// };
+// jwtf();
