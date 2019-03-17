@@ -75,7 +75,6 @@ router.get('/api/tasks', auth, async (req, res) => {
       }
 
       options.sort = sort;
-      
     } catch (e) {
       res.status(400).json({
         error:
