@@ -1,8 +1,23 @@
 const express = require('express');
+const multer = require('multer');
+
 const User = require('../models/user');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
+const avatar = multer({
+  dest: 'avatar',
+  limits: {
+    fileSize: 1000000
+  },
+  fileFilter(req, file, callback) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      callback(new Error('Please a valid image .jpg, .jpeg or .png.'));
+      return;
+    }
+    callback(null, true);
+  }
+});
 
 router.post('/api/users', async (req, res) => {
   const user = new User(req.body);
@@ -66,12 +81,6 @@ router.post('/api/users/logoutall', auth, async (req, res) => {
 });
 
 router.get('/api/users/me', auth, async (req, res) => {
-  // await req.user.populate('tasks').execPopulate();
-
-  // const user = await User.findById(req.user._id);
-  // await user.populate('tasks').execPopulate();
-
-  // console.log(user.tasks);
   res.json(req.user);
 });
 
@@ -105,5 +114,13 @@ router.delete('/api/users/me', auth, async (req, res) => {
     res.status(400).json(e);
   }
 });
+
+router.post(
+  '/api/users/me/avatar',
+  avatar.single('avatar'),
+  async (req, res) => {
+    res.send();
+  }
+);
 
 module.exports = router;
