@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const app = require('../src/index');
 const Task = require('../src/models/task');
-const { userOneId, userOne, setupDB } = require('./fixtures/db');
+const { userOne, setupDB, userTwo, taskOneId } = require('./fixtures/db');
 
 beforeEach(setupDB);
 
@@ -34,4 +34,15 @@ test('Should get 2 task', async () => {
     .expect(200);
 
   expect(res.body.length).toBe(2);
+});
+
+test('Should not delete the task', async () => {
+  const res = await request(app)
+    .delete(`/api/tasks/${taskOneId}`)
+    .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
+    .send()
+    .expect(404);
+
+    const task = await Task.findById(taskOneId);
+    expect(task).not.toBeNull();
 });

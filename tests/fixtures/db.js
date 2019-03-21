@@ -6,6 +6,7 @@ const Task = require('../../src/models/task');
 
 const userOneId = new mongoose.Types.ObjectId();
 const userTwoId = new mongoose.Types.ObjectId();
+const taskOneId = new mongoose.Types.ObjectId();
 
 const userOne = {
   _id: userOneId,
@@ -31,7 +32,7 @@ const userTwo = {
 };
 
 const taskOne = {
-  _id: new mongoose.Types.ObjectId(),
+  _id: taskOneId,
   description: '1',
   completed: false,
   user_id: userOne._id
@@ -65,5 +66,8 @@ const setupDB = async () => {
 module.exports = {
   userOneId,
   userOne,
-  setupDB
+  setupDB,
+  userTwoId,
+  userTwo,
+  taskOneId
 };
